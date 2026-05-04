@@ -1,0 +1,105 @@
+{% extends 'main/base.html' %}
+{% block title %}Contact Us - NestHaven{% endblock %}
+
+{% block extra_css %}
+<style>
+  .contact-page { padding: 140px 60px 80px; max-width: 1200px; margin: 0 auto; }
+
+  .contact-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 80px; align-items: start; }
+
+  .contact-info h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--white); margin-bottom: 20px; }
+  .contact-info p { color: var(--text-muted); line-height: 1.8; margin-bottom: 40px; }
+
+  .info-item {
+    display: flex; align-items: flex-start; gap: 16px;
+    margin-bottom: 28px;
+  }
+  .info-icon {
+    width: 48px; height: 48px; min-width: 48px;
+    background: rgba(201,168,76,0.08);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gold); font-size: 1.1rem;
+  }
+  .info-text strong { color: var(--white); display: block; margin-bottom: 4px; font-size: 0.9rem; }
+  .info-text span { color: var(--text-muted); font-size: 0.88rem; }
+
+  .contact-form {
+    background: var(--dark2);
+    border: 1px solid rgba(201,168,76,0.1);
+    border-radius: 8px;
+    padding: 48px;
+  }
+
+  .form-group { margin-bottom: 24px; }
+  .form-group label { display: block; color: var(--text-muted); font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
+  .form-group input, .form-group textarea {
+    width: 100%;
+    background: var(--dark3);
+    border: 1px solid rgba(201,168,76,0.12);
+    color: var(--text);
+    padding: 14px 18px;
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    transition: border-color 0.3s;
+    outline: none;
+  }
+  .form-group input:focus, .form-group textarea:focus { border-color: var(--gold); }
+  .form-group textarea { height: 130px; resize: vertical; }
+
+  @media (max-width: 900px) {
+    .contact-page { padding: 120px 24px 60px; }
+    .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+    .contact-form { padding: 28px; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="contact-page">
+  <div class="contact-grid">
+    <div class="contact-info">
+      <div class="section-label">Get In Touch</div>
+      <h2>Contact <span style="color:var(--gold);">Us</span></h2>
+      <p>Have a question or need help booking? We're here 24/7 to assist you.</p>
+      <div class="info-item">
+        <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+        <div class="info-text"><strong>Address</strong><span>123 City Center, Bahawalpur, Punjab, Pakistan</span></div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon"><i class="fas fa-phone"></i></div>
+        <div class="info-text"><strong>Phone</strong><span>+92 300 1234567</span></div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon"><i class="fas fa-envelope"></i></div>
+        <div class="info-text"><strong>Email</strong><span>info@nesthaven.com</span></div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon"><i class="fas fa-clock"></i></div>
+        <div class="info-text"><strong>Reception Hours</strong><span>24 hours / 7 days a week</span></div>
+      </div>
+    </div>
+    <div class="contact-form">
+      <h3 style="font-family:'Playfair Display',serif; font-size:1.6rem; color:var(--white); margin-bottom:30px;">Send a Message</h3>
+      <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" name="name" placeholder="Your name" required/>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" name="email" placeholder="your@email.com" required/>
+        </div>
+        <div class="form-group">
+          <label>Your Message</label>
+          <textarea name="message" placeholder="How can we help you?" required></textarea>
+        </div>
+        <button type="submit" class="btn-gold" style="width:100%; padding:15px;">Send Message</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

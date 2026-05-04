@@ -1,0 +1,562 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}NestHaven - Luxury Hostel Experience{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0D0D0D 0%, #1a1208 50%, #0D0D0D 100%);
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 70% 50%, rgba(201,168,76,0.08) 0%, transparent 70%),
+                radial-gradient(ellipse at 20% 80%, rgba(201,168,76,0.05) 0%, transparent 50%);
+  }
+
+  .hero-grid-overlay {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .hero-content {
+    position: relative; z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 60px;
+    padding-top: 100px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    width: 100%;
+  }
+
+  .hero-left { animation: fadeUp 1s ease forwards; }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid rgba(201,168,76,0.3);
+    padding: 8px 20px;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 30px;
+  }
+
+  .hero-badge span { width: 6px; height: 6px; background: var(--gold); border-radius: 50%; animation: pulse 2s infinite; }
+
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--white);
+    margin-bottom: 24px;
+  }
+
+  .hero-title .gold { color: var(--gold); display: block; }
+
+  .hero-desc {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    line-height: 1.8;
+    margin-bottom: 40px;
+    max-width: 480px;
+  }
+
+  .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  .hero-stats {
+    display: flex; gap: 40px;
+    margin-top: 50px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+  }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  .stat-label { color: var(--text-muted); font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; }
+
+  .hero-right {
+    position: relative;
+    animation: fadeIn 1.2s ease forwards;
+  }
+
+  .hero-card {
+    background: var(--dark2);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .hero-card-img {
+    width: 100%;
+    height: 380px;
+    object-fit: cover;
+    background: linear-gradient(135deg, #1a1a1a, #2d2415);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 5rem;
+  }
+
+  .hero-card-info {
+    padding: 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .hero-card-info h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--white); }
+  .hero-card-info p { color: var(--text-muted); font-size: 0.85rem; margin-top: 4px; }
+  .hero-price { text-align: right; }
+  .hero-price .amount { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--gold); font-weight: 700; }
+  .hero-price small { color: var(--text-muted); font-size: 0.75rem; display: block; }
+
+  .floating-badge {
+    position: absolute;
+    top: -16px; right: 24px;
+    background: var(--gold);
+    color: var(--dark);
+    padding: 8px 20px;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+
+  /* FEATURES */
+  .features {
+    padding: 100px 60px;
+    background: var(--dark2);
+  }
+
+  .features-grid {
+    max-width: 1200px; margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+  }
+
+  .feature-card {
+    background: var(--dark3);
+    border: 1px solid rgba(201,168,76,0.08);
+    border-radius: 8px;
+    padding: 36px 28px;
+    text-align: center;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+
+  .feature-card:hover { transform: translateY(-8px); border-color: rgba(201,168,76,0.25); }
+  .feature-card:hover::before { transform: scaleX(1); }
+
+  .feature-icon {
+    width: 64px; height: 64px;
+    background: rgba(201,168,76,0.08);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 1.5rem;
+    color: var(--gold);
+    transition: all 0.3s;
+  }
+
+  .feature-card:hover .feature-icon { background: rgba(201,168,76,0.15); }
+
+  .feature-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--white);
+    margin-bottom: 10px;
+  }
+
+  .feature-card p { color: var(--text-muted); font-size: 0.88rem; line-height: 1.7; }
+
+  /* ROOMS SECTION */
+  .rooms-section { padding: 100px 60px; max-width: 1200px; margin: 0 auto; }
+
+  .rooms-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+  }
+
+  .room-card {
+    background: var(--dark2);
+    border: 1px solid rgba(201,168,76,0.08);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.4s;
+    position: relative;
+  }
+
+  .room-card:hover { transform: translateY(-10px); box-shadow: 0 30px 60px rgba(0,0,0,0.5); border-color: rgba(201,168,76,0.2); }
+
+  .room-img {
+    height: 220px;
+    background: linear-gradient(135deg, #1a1a1a, #2d2415);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 4rem;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .room-img img { width: 100%; height: 100%; object-fit: cover; }
+
+  .room-type-badge {
+    position: absolute; top: 16px; left: 16px;
+    background: rgba(13,13,13,0.8);
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--gold);
+    padding: 5px 14px;
+    border-radius: 100px;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    backdrop-filter: blur(10px);
+  }
+
+  .room-body { padding: 28px; }
+
+  .room-body h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--white);
+    margin-bottom: 10px;
+  }
+
+  .room-body p { color: var(--text-muted); font-size: 0.88rem; line-height: 1.7; margin-bottom: 20px; }
+
+  .room-meta {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .meta-item { display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 0.82rem; }
+  .meta-item i { color: var(--gold); font-size: 0.75rem; }
+
+  .room-footer { display: flex; justify-content: space-between; align-items: center; }
+  .room-price .amount { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--gold); font-weight: 700; }
+  .room-price small { color: var(--text-muted); font-size: 0.75rem; display: block; }
+
+  /* TESTIMONIALS */
+  .testimonials {
+    padding: 100px 60px;
+    background: var(--dark2);
+  }
+
+  .testimonials-inner { max-width: 1200px; margin: 0 auto; }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+  }
+
+  .testimonial-card {
+    background: var(--dark3);
+    border: 1px solid rgba(201,168,76,0.08);
+    border-radius: 8px;
+    padding: 36px;
+    position: relative;
+  }
+
+  .quote-icon {
+    font-size: 3rem;
+    color: rgba(201,168,76,0.15);
+    font-family: 'Playfair Display', serif;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+
+  .testimonial-text { color: var(--text-muted); font-size: 0.9rem; line-height: 1.8; margin-bottom: 24px; }
+
+  .testimonial-author { display: flex; align-items: center; gap: 14px; }
+
+  .author-avatar {
+    width: 46px; height: 46px;
+    background: var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    color: var(--dark);
+    font-size: 1rem;
+  }
+
+  .author-name { color: var(--white); font-weight: 500; font-size: 0.9rem; }
+  .author-loc { color: var(--text-muted); font-size: 0.8rem; }
+
+  .stars { color: var(--gold); font-size: 0.8rem; margin-bottom: 4px; }
+
+  /* CTA */
+  .cta-section {
+    padding: 100px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-section::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(201,168,76,0.06) 0%, transparent 70%);
+  }
+
+  .cta-inner { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
+
+  .cta-inner p { color: var(--text-muted); margin: 20px 0 40px; font-size: 1.05rem; line-height: 1.8; }
+
+  .cta-btns { display: flex; gap: 16px; justify-content: center; }
+
+  @media (max-width: 1024px) {
+    .features-grid { grid-template-columns: repeat(2, 1fr); }
+    .rooms-grid { grid-template-columns: repeat(2, 1fr); }
+    .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 768px) {
+    .hero-content { grid-template-columns: 1fr; padding: 0 24px; padding-top: 100px; gap: 40px; }
+    .hero-right { display: none; }
+    .features { padding: 60px 24px; }
+    .features-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+    .rooms-section { padding: 60px 24px; }
+    .rooms-grid { grid-template-columns: 1fr; }
+    .testimonials { padding: 60px 24px; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .cta-section { padding: 60px 24px; }
+    .hero-stats { gap: 24px; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-left">
+      <div class="hero-badge"><span></span> Premium Hostel Experience</div>
+      <h1 class="hero-title">
+        Your Home
+        <span class="gold">Away From</span>
+        Home.
+      </h1>
+      <p class="hero-desc">Discover comfort, community, and culture under one roof. NestHaven offers premium rooms at unbeatable prices for the modern traveler.</p>
+      <div class="hero-actions">
+        <a href="{% url 'rooms' %}" class="btn-gold">Explore Rooms</a>
+        <a href="{% url 'contact' %}" class="btn-outline">Contact Us</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-num">500+</div>
+          <div class="stat-label">Happy Guests</div>
+        </div>
+        <div>
+          <div class="stat-num">20+</div>
+          <div class="stat-label">Room Types</div>
+        </div>
+        <div>
+          <div class="stat-num">4.9★</div>
+          <div class="stat-label">Rating</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-card">
+        <div class="floating-badge">⭐ Top Rated 2025</div>
+        <div class="hero-card-img">🏨</div>
+        <div class="hero-card-info">
+          <div>
+            <h3>Deluxe Double Room</h3>
+            <p>Free WiFi · AC · Breakfast Included</p>
+          </div>
+          <div class="hero-price">
+            <div class="amount">Rs 2,500</div>
+            <small>per night</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <div style="max-width:1200px; margin:0 auto;">
+    <div class="section-header">
+      <div class="section-label">Why Choose Us</div>
+      <h2 class="section-title">Everything You <span>Need</span></h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-wifi"></i></div>
+        <h3>Free High-Speed WiFi</h3>
+        <p>Stay connected with blazing fast internet throughout the entire hostel.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+        <h3>24/7 Security</h3>
+        <p>Round-the-clock security staff and CCTV for your complete peace of mind.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-utensils"></i></div>
+        <h3>Breakfast Included</h3>
+        <p>Start your day right with our complimentary breakfast buffet every morning.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-concierge-bell"></i></div>
+        <h3>24/7 Reception</h3>
+        <p>Our friendly staff is always available to assist you day or night.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED ROOMS -->
+<section class="rooms-section">
+  <div class="section-header">
+    <div class="section-label">Our Rooms</div>
+    <h2 class="section-title">Featured <span>Accommodations</span></h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="rooms-grid">
+    {% for room in rooms %}
+    <div class="room-card">
+      <div class="room-img">
+        {% if room.image %}
+          <img src="{{ room.image.url }}" alt="{{ room.name }}"/>
+        {% else %}
+          🛏️
+        {% endif %}
+        <div class="room-type-badge">{{ room.get_room_type_display }}</div>
+      </div>
+      <div class="room-body">
+        <h3>{{ room.name }}</h3>
+        <p>{{ room.description|truncatewords:18 }}</p>
+        <div class="room-meta">
+          <div class="meta-item"><i class="fas fa-users"></i> {{ room.capacity }} Guests</div>
+          <div class="meta-item"><i class="fas fa-wifi"></i> Free WiFi</div>
+          <div class="meta-item"><i class="fas fa-snowflake"></i> AC</div>
+        </div>
+        <div class="room-footer">
+          <div class="room-price">
+            <div class="amount">Rs {{ room.price_per_night }}</div>
+            <small>per night</small>
+          </div>
+          <a href="{% url 'room_detail' room.pk %}" class="btn-gold" style="padding:10px 24px;font-size:0.8rem;">View Room</a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div style="grid-column:1/-1; text-align:center; color:var(--text-muted); padding:60px;">
+      <div style="font-size:3rem; margin-bottom:16px;">🏨</div>
+      <p>No rooms available yet. <a href="/admin/" style="color:var(--gold);">Add rooms from admin panel.</a></p>
+    </div>
+    {% endfor %}
+  </div>
+  {% if rooms %}
+  <div style="text-align:center; margin-top:50px;">
+    <a href="{% url 'rooms' %}" class="btn-outline">View All Rooms</a>
+  </div>
+  {% endif %}
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="testimonials-inner">
+    <div class="section-header">
+      <div class="section-label">Guest Reviews</div>
+      <h2 class="section-title">What Our <span>Guests Say</span></h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="quote-icon">"</div>
+        <p class="testimonial-text">Absolutely amazing stay! The staff was incredibly helpful and the room was spotlessly clean. Will definitely come back on my next trip.</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">A</div>
+          <div>
+            <div class="stars">★★★★★</div>
+            <div class="author-name">Ahmed Khan</div>
+            <div class="author-loc">Lahore, Pakistan</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote-icon">"</div>
+        <p class="testimonial-text">Best value for money hostel I've ever stayed at. The location is perfect and the breakfast was delicious every morning.</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">S</div>
+          <div>
+            <div class="stars">★★★★★</div>
+            <div class="author-name">Sara Ahmed</div>
+            <div class="author-loc">Karachi, Pakistan</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="quote-icon">"</div>
+        <p class="testimonial-text">I loved the community feel here. Met so many interesting people and the common area is a great place to relax after a long day.</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">M</div>
+          <div>
+            <div class="stars">★★★★★</div>
+            <div class="author-name">Muhammad Ali</div>
+            <div class="author-loc">Islamabad, Pakistan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div class="section-label">Ready to Book?</div>
+    <h2 class="section-title">Start Your <span>Journey</span> Today</h2>
+    <p>Join hundreds of happy guests who chose NestHaven. Book your room today and enjoy a comfortable, affordable stay.</p>
+    <div class="cta-btns">
+      <a href="{% url 'rooms' %}" class="btn-gold">Book a Room</a>
+      <a href="{% url 'contact' %}" class="btn-outline">Get In Touch</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

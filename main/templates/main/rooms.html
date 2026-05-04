@@ -1,0 +1,263 @@
+{% extends 'main/base.html' %}
+{% block title %}Our Rooms - NestHaven{% endblock %}
+
+{% block extra_css %}
+<style>
+  .page-hero {
+    padding: 160px 60px 80px;
+    background: linear-gradient(135deg, var(--dark) 0%, #1a1208 100%);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .page-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(201,168,76,0.07) 0%, transparent 70%);
+  }
+  .page-hero-content { position: relative; z-index: 1; }
+  .page-hero p { color: var(--text-muted); margin-top: 16px; font-size: 1.05rem; }
+
+  /* FILTER BAR */
+  .filter-section {
+    background: var(--dark2);
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+    padding: 30px 60px;
+    position: sticky;
+    top: 72px;
+    z-index: 100;
+  }
+
+  .filter-form {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+
+  .filter-group { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 160px; }
+  .filter-group label { color: var(--text-muted); font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase; }
+  .filter-group input,
+  .filter-group select {
+    background: var(--dark3);
+    border: 1px solid rgba(201,168,76,0.12);
+    color: var(--text);
+    padding: 11px 16px;
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  .filter-group input:focus,
+  .filter-group select:focus { border-color: var(--gold); }
+  .filter-group select option { background: var(--dark3); }
+
+  .filter-btn { display: flex; gap: 10px; }
+  .btn-filter {
+    background: var(--gold); color: var(--dark);
+    border: none; padding: 11px 28px;
+    border-radius: 4px; font-weight: 700;
+    font-size: 0.85rem; letter-spacing: 1px;
+    text-transform: uppercase; cursor: pointer;
+    transition: all 0.3s; white-space: nowrap;
+  }
+  .btn-filter:hover { background: var(--gold-light); }
+  .btn-reset {
+    background: transparent; color: var(--text-muted);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 11px 20px; border-radius: 4px;
+    font-size: 0.85rem; cursor: pointer;
+    transition: all 0.3s; white-space: nowrap;
+    text-decoration: none; display: flex; align-items: center;
+  }
+  .btn-reset:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* RESULTS */
+  .rooms-page { padding: 60px 60px; max-width: 1200px; margin: 0 auto; }
+
+  .results-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .results-bar span { color: var(--text-muted); font-size: 0.9rem; }
+  .results-bar strong { color: var(--gold); }
+
+  .active-filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+  .filter-tag {
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.2);
+    color: var(--gold);
+    padding: 5px 14px;
+    border-radius: 100px;
+    font-size: 0.78rem;
+  }
+
+  .rooms-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+  }
+
+  .room-card {
+    background: var(--dark2);
+    border: 1px solid rgba(201,168,76,0.08);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.4s;
+  }
+  .room-card:hover { transform: translateY(-10px); box-shadow: 0 30px 60px rgba(0,0,0,0.5); border-color: rgba(201,168,76,0.2); }
+
+  .room-img {
+    height: 230px;
+    background: linear-gradient(135deg, #1a1a1a, #2d2415);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 4rem;
+    overflow: hidden;
+    position: relative;
+  }
+  .room-img img { width: 100%; height: 100%; object-fit: cover; }
+  .room-type-badge {
+    position: absolute; top: 16px; left: 16px;
+    background: rgba(13,13,13,0.85); border: 1px solid rgba(201,168,76,0.3);
+    color: var(--gold); padding: 5px 14px; border-radius: 100px;
+    font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase;
+    backdrop-filter: blur(10px);
+  }
+  .available-badge {
+    position: absolute; top: 16px; right: 16px;
+    background: rgba(34,197,94,0.15);
+    border: 1px solid rgba(34,197,94,0.3);
+    color: #4ade80; padding: 5px 14px; border-radius: 100px;
+    font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase;
+  }
+
+  .room-body { padding: 28px; }
+  .room-body h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--white); margin-bottom: 10px; }
+  .room-body p { color: var(--text-muted); font-size: 0.88rem; line-height: 1.7; margin-bottom: 20px; }
+
+  .room-meta { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .meta-item { display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 0.82rem; }
+  .meta-item i { color: var(--gold); font-size: 0.75rem; }
+
+  .room-footer { display: flex; justify-content: space-between; align-items: center; }
+  .room-price .amount { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--gold); font-weight: 700; }
+  .room-price small { color: var(--text-muted); font-size: 0.75rem; display: block; }
+
+  .no-results {
+    grid-column: 1/-1; text-align: center;
+    color: var(--text-muted); padding: 80px 0;
+  }
+  .no-results .icon { font-size: 4rem; margin-bottom: 20px; }
+  .no-results h3 { color: var(--white); font-family: 'Playfair Display', serif; margin-bottom: 12px; }
+
+  @media (max-width: 1024px) { .rooms-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 768px) {
+    .page-hero { padding: 120px 24px 60px; }
+    .filter-section { padding: 20px 24px; top: 65px; }
+    .filter-form { gap: 12px; }
+    .rooms-page { padding: 40px 24px; }
+    .rooms-grid { grid-template-columns: 1fr; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-hero">
+  <div class="page-hero-content">
+    <div class="section-label">Accommodations</div>
+    <h1 class="section-title">Our <span>Rooms</span></h1>
+    <p>Find the perfect room for your stay</p>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-section">
+  <form class="filter-form" method="GET">
+    <div class="filter-group">
+      <label>🔍 Search</label>
+      <input type="text" name="search" placeholder="Room name..." value="{{ search }}"/>
+    </div>
+    <div class="filter-group">
+      <label>🏷️ Room Type</label>
+      <select name="room_type">
+        <option value="">All Types</option>
+        <option value="single" {% if room_type == 'single' %}selected{% endif %}>Single</option>
+        <option value="double" {% if room_type == 'double' %}selected{% endif %}>Double</option>
+        <option value="dormitory" {% if room_type == 'dormitory' %}selected{% endif %}>Dormitory</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>💰 Max Price (Rs)</label>
+      <input type="number" name="max_price" placeholder="e.g. 5000" value="{{ max_price }}"/>
+    </div>
+    <div class="filter-group">
+      <label>👥 Min Capacity</label>
+      <input type="number" name="capacity" placeholder="e.g. 2" value="{{ capacity }}"/>
+    </div>
+    <div class="filter-btn">
+      <button type="submit" class="btn-filter">Search</button>
+      <a href="{% url 'rooms' %}" class="btn-reset">Reset</a>
+    </div>
+  </form>
+</div>
+
+<!-- ROOMS LIST -->
+<div class="rooms-page">
+
+  <!-- Active Filters -->
+  {% if search or room_type or max_price or capacity %}
+  <div class="active-filters">
+    {% if search %}<span class="filter-tag">🔍 "{{ search }}"</span>{% endif %}
+    {% if room_type %}<span class="filter-tag">🏷️ {{ room_type|title }}</span>{% endif %}
+    {% if max_price %}<span class="filter-tag">💰 Max Rs {{ max_price }}</span>{% endif %}
+    {% if capacity %}<span class="filter-tag">👥 Min {{ capacity }} guests</span>{% endif %}
+  </div>
+  {% endif %}
+
+  <div class="results-bar">
+    <span><strong>{{ rooms|length }}</strong> room(s) found</span>
+  </div>
+
+  <div class="rooms-grid">
+    {% for room in rooms %}
+    <div class="room-card">
+      <div class="room-img">
+        {% if room.image %}<img src="{{ room.image.url }}" alt="{{ room.name }}"/>{% else %}🛏️{% endif %}
+        <div class="room-type-badge">{{ room.get_room_type_display }}</div>
+        <div class="available-badge">✓ Available</div>
+      </div>
+      <div class="room-body">
+        <h3>{{ room.name }}</h3>
+        <p>{{ room.description|truncatewords:20 }}</p>
+        <div class="room-meta">
+          <div class="meta-item"><i class="fas fa-users"></i> {{ room.capacity }} Guests</div>
+          <div class="meta-item"><i class="fas fa-wifi"></i> Free WiFi</div>
+          <div class="meta-item"><i class="fas fa-snowflake"></i> AC</div>
+        </div>
+        <div class="room-footer">
+          <div class="room-price">
+            <div class="amount">Rs {{ room.price_per_night }}</div>
+            <small>per night</small>
+          </div>
+          <a href="{% url 'room_detail' room.pk %}" class="btn-gold" style="padding:10px 24px;font-size:0.8rem;">View & Book</a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="no-results">
+      <div class="icon">🔍</div>
+      <h3>No Rooms Found</h3>
+      <p>Try changing your search filters.</p>
+      <a href="{% url 'rooms' %}" class="btn-gold" style="margin-top:20px; display:inline-block;">Clear Filters</a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}
